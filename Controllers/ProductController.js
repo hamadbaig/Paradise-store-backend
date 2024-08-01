@@ -1,13 +1,21 @@
-const Product = require('../Models/ProductModel');
-const { v4: uuidv4 } = require('uuid');
-const AWS = require('aws-sdk');
+const Product = require("../Models/ProductModel");
+const { v4: uuidv4 } = require("uuid");
+const AWS = require("aws-sdk");
 const { AWS_BUCKET_NAME } = process.env;
 
 const s3 = new AWS.S3();
 
 exports.addProduct = async (req, res) => {
   try {
-    const { name, price,description, category ,imageUrl,imageUrl1, imageUrl2} = req.body;
+    const {
+      name,
+      price,
+      description,
+      category,
+      imageUrl,
+      imageUrl1,
+      imageUrl2,
+    } = req.body;
     // const images = req.files.map(val => val.path)
     // if(images.length > 5) {
     //   res.status(413).json({ error: 'Too many images' })
@@ -30,11 +38,19 @@ exports.addProduct = async (req, res) => {
     //     imageUrls.push(data.Location);
     //   })
     // );
-    const product = await Product.create({ name, price,description, category, imageUrl,imageUrl1, imageUrl2 });
+    const product = await Product.create({
+      name,
+      price,
+      description,
+      category,
+      imageUrl,
+      imageUrl1,
+      imageUrl2,
+    });
     res.status(201).json({ product });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Internal Server Error' });
+    res.status(500).json({ error: "Internal Server Error" });
   }
 };
 // exports.addProduct = async (req, res) => {
@@ -61,10 +77,10 @@ exports.searchProducts = async (req, res) => {
     const { query } = req.query;
 
     if (!query) {
-      return res.status(400).json({ error: 'Search query is required' });
+      return res.status(400).json({ error: "Search query is required" });
     }
 
-    const regex = new RegExp(query, 'i'); // Case-insensitive regex
+    const regex = new RegExp(query, "i"); // Case-insensitive regex
 
     const products = await Product.find({
       $or: [{ name: regex }, { description: regex }],
@@ -73,7 +89,7 @@ exports.searchProducts = async (req, res) => {
     res.status(200).json({ products });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Internal Server Error' });
+    res.status(500).json({ error: "Internal Server Error" });
   }
 };
 
@@ -86,10 +102,12 @@ exports.searchProducts = async (req, res) => {
 exports.getProducts = async (req, res) => {
   try {
     const products = await Product.find();
-    res.status(200).json({ message: 'Data fetched successfully', success: true, products });
+    res
+      .status(200)
+      .json({ message: "Data fetched successfully", success: true, products });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Internal Server Error' });
+    res.status(500).json({ error: "Internal Server Error" });
   }
 };
 
@@ -97,27 +115,35 @@ exports.getProductsByCategories = async (req, res) => {
   try {
     const { categoryId } = req.body;
     if (!categoryId || !Array.isArray(categoryId)) {
-      return res.status(400).json({ error: 'Invalid request. Please provide an array of categories.' });
+      return res
+        .status(400)
+        .json({
+          error: "Invalid request. Please provide an array of categories.",
+        });
     }
 
-    const products = await Product.find({ "category": { $in: categoryId } });
+    const products = await Product.find({ category: { $in: categoryId } });
 
-    res.status(200).json({ message: 'Data fetched successfully', success: true, products });
+    res
+      .status(200)
+      .json({ message: "Data fetched successfully", success: true, products });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Internal Server Error' });
+    res.status(500).json({ error: "Internal Server Error" });
   }
 };
 
 exports.getProductById = async (req, res) => {
   try {
     // Extract prodyct ID from request parameters or query parameters
-    const {productId} = req.body;
+    const { productId } = req.body;
     // Fetch products based on the filter
     const product = await Product.findById(productId);
-    res.status(201).json({ message: "Data fetched successfully", success: true, product });
+    res
+      .status(201)
+      .json({ message: "Data fetched successfully", success: true, product });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Internal Server Error' });
+    res.status(500).json({ error: "Internal Server Error" });
   }
 };
