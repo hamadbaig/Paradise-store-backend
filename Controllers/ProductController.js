@@ -16,28 +16,7 @@ exports.addProduct = async (req, res) => {
       imageUrl1,
       imageUrl2,
     } = req.body;
-    // const images = req.files.map(val => val.path)
-    // if(images.length > 5) {
-    //   res.status(413).json({ error: 'Too many images' })
-    //   return
-    // }
-    // const files = req.files;
-    // const imageUrls = [];
 
-    // Upload all files to S3 and collect image URLs
-    // await Promise.all(
-    //   files.map(async (file) => {
-    //     const key = `${uuidv4()}-${file.originalname}`;
-    //     const params = {
-    //       Bucket: AWS_BUCKET_NAME,
-    //       Key: key,
-    //       Body: file.buffer,
-    //       ContentType: file.mimetype,
-    //     };
-    //     const data = await s3.upload(params).promise();
-    //     imageUrls.push(data.Location);
-    //   })
-    // );
     const product = await Product.create({
       name,
       price,
@@ -110,20 +89,35 @@ exports.getProducts = async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
+// In your controller file (e.g., ProductController.js)
+// exports.getProductsByCategory = async (req, res) => {
+//   try {
+//     const { categoryId } = req.body;
+//     if (!categoryId) {
+//       return res.status(400).json({
+//         error: "Invalid request. Please provide a category ID.",
+//       });
+//     }
+
+//     const products = await Product.find({ category: { $in: categoryId } });
+//     res
+//       .status(200)
+//       .json({ message: "Data fetched successfully", success: true, products });
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ error: "Internal Server Error" });
+//   }
+// };
 
 exports.getProductsByCategories = async (req, res) => {
   try {
     const { categoryId } = req.body;
     if (!categoryId || !Array.isArray(categoryId)) {
-      return res
-        .status(400)
-        .json({
-          error: "Invalid request. Please provide an array of categories.",
-        });
+      return res.status(400).json({
+        error: "Invalid request. Please provide an array of categories.",
+      });
     }
-
     const products = await Product.find({ category: { $in: categoryId } });
-
     res
       .status(200)
       .json({ message: "Data fetched successfully", success: true, products });

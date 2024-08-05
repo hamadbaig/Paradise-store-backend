@@ -1,4 +1,4 @@
-const { Cart, CartItem } = require('../Models/CartModel');
+const { Cart, CartItem } = require("../Models/CartModel");
 
 exports.addToCart = async (req, res) => {
   try {
@@ -12,7 +12,9 @@ exports.addToCart = async (req, res) => {
     }
 
     // Check if the product is already in the cart
-    const existingItem = cart.items.find(item => item.productId.equals(productId));
+    const existingItem = cart.items.find((item) =>
+      item.productId.equals(productId)
+    );
 
     if (existingItem) {
       existingItem.quantity += quantity;
@@ -22,11 +24,12 @@ exports.addToCart = async (req, res) => {
     }
 
     await cart.save();
-
-    res.status(201).json({ message: 'Item added to cart successfully', status: true, cart });
+    res
+      .status(201)
+      .json({ message: "Item added to cart successfully", status: true, cart });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Internal Server Error' });
+    res.status(500).json({ error: "Internal Server Error" });
   }
 };
 
@@ -34,11 +37,13 @@ exports.viewCart = async (req, res) => {
   try {
     const userId = req.userId; // Assuming you have user authentication middleware
 
-    const cart = await Cart.findOne({ user: userId }).populate('items.productId');
+    const cart = await Cart.findOne({ user: userId }).populate(
+      "items.productId"
+    );
 
     res.status(200).json({ cart });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Internal Server Error' });
+    res.status(500).json({ error: "Internal Server Error" });
   }
 };
